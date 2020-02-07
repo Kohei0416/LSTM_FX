@@ -62,3 +62,37 @@ model.fit(X_train, Y_train,
           validation_data=(X_validation, Y_validation),
           callbacks=[early_stopping], shuffle=True)
 
+#=================評価1_学習の進捗状況=========================================
+"""
+  fig, ax1 = plt.subplots(1,1)
+ 
+  ax1.plot(yen_history.epoch, yen_history.history['loss'])
+  ax1.set_title('TrainingError')
+ 
+  if yen_model.loss == 'mae':
+      ax1.set_ylabel('Mean Absolute Error (MAE)',fontsize=12)
+  else:
+      ax1.set_ylabel('Model Loss',fontsize=12)
+  ax1.set_xlabel('# Epochs',fontsize=12)
+  plt.show()
+
+#=================評価2_訓練データの予測結果===================================
+# 訓練データから予測をして正解レートと予測したレートをプロット
+fig, ax1 = plt.subplots(1,1)
+
+ax1.plot(df[df['time']< split_date]['time'][window_len:],
+         train['close'][window_len:], label='Actual', color='blue')
+
+ax1.plot(df[df['time']< split_date]['time'][window_len:],
+         ((np.transpose(yen_model.predict(train_lstm_in))+1) * train['close'].values[:-window_len])[0],
+         label='Predicted', color='red')
+"""
+
+# テストデータを使って予測＆プロット
+fig, ax1 = plt.subplots(1,1)
+ax1.plot(df[df['time']>= split_date]['time'][window_len:],
+         test['close'][window_len:], label='Actual', color='blue')
+ax1.plot(df[df['time']>= split_date]['time'][window_len:],
+         ((np.transpose(yen_model.predict(test_lstm_in))+1) * test['close'].values[:-window_len])[0], 
+         label='Predicted', color='red')
+ax1.grid(True)
